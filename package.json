@@ -10,6 +10,7 @@
     "contract:emit": "prisma contract emit"
   },
   "dependencies": {
+    "@line/liff": "^2.31.2",
     "@prisma/orm-postgres": "^8.0.0-rc.22",
     "dotenv": "^18.0.9",
     "next": "16.4.4",
