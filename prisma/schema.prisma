@@ -1,0 +1,27 @@
+// use prisma-8
+model User {
+  id        String                   @id @onCreate(uuid())
+  lineId    String                   @unique
+  email     String                   @unique
+  firstname String
+  lastname  String
+  telephone String
+  image     String?
+  isActive  Boolean                  @default(true)
+  createdAt TimestamptzString        @default(now())
+  updatedAt temporal.UpdatedAt
+
+  role      UserRole                 @relation(fields: [roleId], references: [id])
+  roleId    Int
+
+  @@rls
+}
+
+model UserRole {
+  id        Int                      @id @default(autoincrement())
+  name      String                   @unique
+  createdAt TimestamptzString        @default(now())
+  updatedAt temporal.UpdatedAt
+
+  @@rls
+}
