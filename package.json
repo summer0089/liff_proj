@@ -27,8 +27,5 @@
     "prisma": "^8.0.0-rc.29",
     "tailwindcss": "^4",
     "typescript": "^5"
-  },
-  "overrides": {
-    "@prisma/orm-toolchain": "8.0.0-rc.22"
   }
 }
