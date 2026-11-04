@@ -376,7 +376,7 @@ export async function POST(request: NextRequest) {
                     action: {
                       type: "uri",
                       label: "แก้ไขข้อมูล",
-                      uri: "https://liff-proj.vercel.app/u/profile",
+                      uri: "https://miniapp.line.me/2012348381-xh5b25Ex",
                     },
                   },
                 ],
