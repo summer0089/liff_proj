@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import liff from "@line/liff";
+import Link from "next/link";
 
 // กำหนดโครงสร้างข้อมูลโปรไฟล์ของ LINE
 interface UserProfile {
@@ -11,11 +12,25 @@ interface UserProfile {
   statusMessage?: string;
 }
 
+interface MemberProfile {
+  id: string;
+  firstname: string;
+  lastname: string;
+  email: string;
+  telephone: string;
+  role?: {
+    id: number;
+    name: string;
+  };
+}
+
 export default function WelcomePage() {
   // สร้าง State สำหรับเก็บสถานะและข้อมูล
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [member, setMember] = useState<MemberProfile | null>(null);
+  const [isMember, setIsMember] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
 
   // ดึงค่า LIFF ID จาก .env
@@ -41,6 +56,20 @@ export default function WelcomePage() {
         // 3. ดึงข้อมูลโปรไฟล์ของผู้ใช้ (LINE ID, รูปโปรไฟล์, ชื่อ)
         const userProfile = await liff.getProfile();
         setProfile(userProfile);
+
+        // 4. ตรวจสอบข้อมูลสมาชิกในระบบผ่าน api/member/profile
+        try {
+          const res = await fetch(`/api/member/profile?lineId=${encodeURIComponent(userProfile.userId)}`);
+          const data = await res.json();
+          if (res.ok && data.success && data.data) {
+            setMember(data.data);
+            setIsMember(true);
+          } else {
+            setIsMember(false);
+          }
+        } catch (memberErr) {
+          console.warn("Could not check member status:", memberErr);
+        }
       } catch (err) {
         console.error("LIFF Error:", err);
         setError(err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการเชื่อมต่อ LINE");
@@ -146,6 +175,34 @@ export default function WelcomePage() {
             <p className="text-xs text-gray-500 text-center mt-1 mb-4 italic">
               &ldquo;{profile.statusMessage}&rdquo;
             </p>
+          )}
+
+          {/* สถานะสมาชิกในระบบ */}
+          {isMember && member ? (
+            <div className="w-full mt-3 p-3 bg-emerald-50 border border-emerald-200 rounded-2xl text-center">
+              <span className="inline-block text-xs font-semibold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded-full mb-1">
+                สมาชิก: {member.role?.name || "MEMBER"}
+              </span>
+              <p className="text-xs text-emerald-700">
+                {member.firstname} {member.lastname}
+              </p>
+              <p className="text-[11px] text-emerald-600">{member.email}</p>
+            </div>
+          ) : (
+            <div className="w-full mt-3 p-3 bg-amber-50 border border-amber-200 rounded-2xl text-center">
+              <span className="text-xs font-semibold text-amber-800">
+                ยังไม่ได้ลงทะเบียนสมาชิก
+              </span>
+              <p className="text-[11px] text-amber-600 mt-0.5">
+                ท่านยังไม่มีข้อมูลในระบบสมาชิก
+              </p>
+              <Link
+                href="/u/register"
+                className="mt-2.5 inline-block w-full py-2 bg-[#06C755] hover:bg-[#05b34c] text-white rounded-xl text-xs font-bold transition shadow-sm"
+              >
+                ลงทะเบียนสมาชิกทันที
+              </Link>
+            </div>
           )}
 
           {/* กล่องแสดง LINE ID */}
