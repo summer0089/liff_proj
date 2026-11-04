@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
                           action: {
                             type: "uri",
                             label: "ลงทะเบียนตอนนี้",
-                            uri: "https://liff-proj.vercel.app/u/register",
+                            uri: "https://miniapp.line.me/2012348381-xh5b25Ex",
                           },
                         },
                       ],
