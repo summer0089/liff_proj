@@ -15,6 +15,18 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  async rewrites() {
+    return [
+      {
+        source: "/submenu/config_1/:size*",
+        destination: "/api/imagemap/config_1/:size*",
+      },
+      {
+        source: "/submenu/config_1.jpg/:size*",
+        destination: "/api/imagemap/config_1/:size*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
